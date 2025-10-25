@@ -1,0 +1,10 @@
+{
+    "cSpell.words": [
+        "errorify",
+        "Furi",
+        "furigana",
+        "furiganaservice",
+        "Interprocess"
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
+}

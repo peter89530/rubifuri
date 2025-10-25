@@ -1,6 +1,8 @@
 "use client"
 
 import { useState } from "react";
+import { RubiFuriCommunicationDocument } from "./handler";
+import { v4 as uuid } from "uuid";
 
 export default function Home() {
     let [output, setOutput] = useState<string>("");
@@ -8,34 +10,20 @@ export default function Home() {
 
     async function createRequest(requestingSentence: string, apiKey: string) {
         setOutput("Making a request through the Yahoo!デベロッパーネットワーク credentials provided...");
-        
-        const params = new URLSearchParams({
-            "appid": apiKey
-        }).toString();
-        const requestEndpoint = "https://jlp.yahooapis.jp/FuriganaService/V2/furigana?" + params;
-        
-        const query = {
-            "id": 812,
-            "jsonrpc": "2.0",
-            "method": "jlp.furiganaservice.furigana",
-            "params": {
-                "q": requestingSentence,
-                "grade": 1,
-            }
+
+        let requestingDocument: RubiFuriCommunicationDocument = {
+            convert: requestingSentence,
+            id: uuid(),
+            apiKey: apiKey
         }
         
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        
-        const response = await fetch(requestEndpoint, {
-            mode: "no-cors",
+        const response = await fetch("http://localhost:62263", {
             method: "POST",
-            body: JSON.stringify(query),
-            headers: headers
+            body: JSON.stringify(requestingDocument)
         })
 
         // This will never work because of browser security issues. Yahoo is returning a perfectly fine response, but JS can never access a cross-origin response body. You can use devtools to view it tho
-        console.log(response);
+        console.log(await response.json());
         setTimeout(() => {
             console.log(response);
         },1000);
@@ -68,21 +56,23 @@ export default function Home() {
     }
 
     return (
-        <main>
-            <h1>rubifuri (ルビ振り) Interface</h1>
-            <p>Note: This open-source project simply aims to create an client side interface for the API.</p>
-            
-            <span style={{textDecoration: "unset", margin: "15px 15px 15px 15px"}}><a href="https://developer.yahoo.co.jp/sitemap/">Webサービス by Yahoo! JAPAN</a></span>
+        <body>
+            <main>
+                <h1>rubifuri (ルビ振り) Interface</h1>
+                <p>Note: This open-source project simply aims to create an client side interface for the API.</p>
 
-            <input id="apiKey" type="password" placeholder="App ID"></input>
-            <input id="in" placeholder="Kanji Input"></input>
-            <button onClick={(event) => {
-                const input = (document.getElementById("in") as HTMLInputElement).value;
-                const key = (document.getElementById("apiKey") as HTMLInputElement).value;
-                console.log(input, key);
-                createRequest(input, key);
-            }}>Request Furigana</button>
-            <p>{output}</p>
-        </main>
+                <span style={{ textDecoration: "unset", margin: "15px 15px 15px 15px" }}><a href="https://developer.yahoo.co.jp/sitemap/">Webサービス by Yahoo! JAPAN</a></span>
+
+                <input id="apiKey" type="password" placeholder="App ID"></input>
+                <input id="in" placeholder="Kanji Input"></input>
+                <button onClick={(event) => {
+                    const input = (document.getElementById("in") as HTMLInputElement).value;
+                    const key = (document.getElementById("apiKey") as HTMLInputElement).value;
+                    console.log(input, key);
+                    createRequest(input, key);
+                }}>Request Furigana</button>
+                <p>{output}</p>
+            </main>
+        </body>
     );
 }
