@@ -32,6 +32,26 @@
 import { createServer } from "http";
 
 
+// yanked from https://developer.yahoo.co.jp/webapi/jlp/furigana/v2/furigana.html#:~:text=%E3%83%AC%E3%82%B9%E3%83%9D%E3%83%B3%E3%82%B9%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89
+// the URL looks so long due to Japanese encodeURIComponent. It's just the documentation for the API.
+export interface YahooResponse {
+    id: string | number,
+    jsonrpc: "2.0",
+    result: {
+        word: Array<{
+            surface: string,
+            furigana: string,
+            roman: string,
+            subword: Array<{
+                surface: string,
+                furigana: string,
+                roman: string
+            }>
+        }>
+    }
+}
+
+
 export class RubiFuriServerResponse {
     state: number = 200;
     errored: {
@@ -42,7 +62,7 @@ export class RubiFuriServerResponse {
         message: ""
     }
     input: string = "";
-    output: object = {};
+    output?: YahooResponse;
 }
 
 export interface RubiFuriCommunicationDocument {
@@ -135,7 +155,7 @@ const startingPoint = createServer((request, response) => {
             message: ""
         };
         respondingTicket.input = body;
-        respondingTicket.output = processedInput.message;
+        respondingTicket.output = processedInput.message as YahooResponse;
 
         response.appendHeader("Access-Control-Allow-Origin", "http://localhost:6226");
         response.end(JSON.stringify(respondingTicket));

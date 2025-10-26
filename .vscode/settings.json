@@ -4,7 +4,8 @@
         "Furi",
         "furigana",
         "furiganaservice",
-        "Interprocess"
+        "Interprocess",
+        "subword"
     ],
     "typescript.tsdk": "node_modules/typescript/lib"
 }
