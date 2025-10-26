@@ -53,6 +53,9 @@ button {
 
     font-weight: 600;
 }
+input {
+    width: calc(100% - 24px);
+}
 
 @media (prefers-color-scheme: dark) {
     input,
@@ -62,9 +65,6 @@ button {
     }
 }
 
-input {
-    width: 100%;
-}
 
 button {
     width: fit-content;
