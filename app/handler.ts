@@ -137,6 +137,7 @@ const startingPoint = createServer((request, response) => {
         respondingTicket.input = body;
         respondingTicket.output = processedInput.message;
 
+        response.appendHeader("Access-Control-Allow-Origin", "http://localhost:6226");
         response.end(JSON.stringify(respondingTicket));
     });
     request.on('error', err => {
