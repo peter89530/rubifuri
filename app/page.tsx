@@ -38,9 +38,13 @@ export default function Home() {
         }
 
         console.log(response.output);
-    
-
+        
         setOutput("Done!");
+        try {
+            setOutput("Furigana: " + response.output!.flattened);
+        } catch {
+            console.log(response.output);
+        }
     }
 
     return (

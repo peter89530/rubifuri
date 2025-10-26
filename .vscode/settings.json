@@ -5,7 +5,10 @@
         "furigana",
         "furiganaservice",
         "Interprocess",
-        "subword"
+        "Rubi",
+        "rubifuri",
+        "subword",
+        "turbopack"
     ],
     "typescript.tsdk": "node_modules/typescript/lib"
 }

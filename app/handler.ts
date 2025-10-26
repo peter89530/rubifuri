@@ -54,15 +54,15 @@ export interface YahooResponse {
 
 export class RubiFuriServerResponse {
     state: number = 200;
-    errored: {
+    errored?: {
         state: boolean,
         message: string
-    } = {
-        state: false, 
-        message: ""
-    }
+    };
     input: string = "";
-    output?: YahooResponse;
+    output?: {
+        flattened: string,
+        actual: YahooResponse
+    };
 }
 
 export interface RubiFuriCommunicationDocument {
@@ -149,13 +149,35 @@ const startingPoint = createServer((request, response) => {
         }
 
         if (processedInput.state === false) { errorify(); return; }
+        const yahooResponse: YahooResponse = (processedInput.message as YahooResponse);
         respondingTicket.state = 200;
-        respondingTicket.errored = {
-            state: false,
-            message: ""
-        };
         respondingTicket.input = body;
-        respondingTicket.output = processedInput.message as YahooResponse;
+
+
+        let totalWordsLength = yahooResponse.result.word.length;
+        let furiganaArray = [];
+
+
+        for (let index = 0; index < totalWordsLength; index++) {
+            const word = yahooResponse.result.word[index];
+
+            try {
+                if (word.furigana === undefined) {
+                    furiganaArray.push(word.surface);
+                    continue;
+                }
+            } catch {
+                continue;
+            }
+
+            furiganaArray.push(word.furigana);
+        }
+
+        
+        respondingTicket.output = {
+            flattened: furiganaArray.join(""),
+            actual: yahooResponse
+        };
 
         response.appendHeader("Access-Control-Allow-Origin", "http://localhost:6226");
         response.end(JSON.stringify(respondingTicket));
