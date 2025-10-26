@@ -10,58 +10,39 @@ export default function Home() {
 
     async function createRequest(requestingSentence: string, apiKey: string) {
         setOutput("Making a request through the Yahoo!デベロッパーネットワーク credentials provided...");
-
+        
         let requestingDocument: RubiFuriCommunicationDocument = {
             convert: requestingSentence,
             id: uuid(),
             apiKey: apiKey
         }
         
-        const response = await fetch("http://localhost:62263", {
-            method: "POST",
-            body: JSON.stringify(requestingDocument)
-        })
-
-        // This will never work because of browser security issues. Yahoo is returning a perfectly fine response, but JS can never access a cross-origin response body. You can use devtools to view it tho
+        let response: Response;
+        try {
+            // made it work by instantiating a client using node, not the browser
+            response = await fetch("http://localhost:62263", {
+                method: "POST",
+                body: JSON.stringify(requestingDocument)
+            });
+        } catch(error) {
+            console.error(error);
+            setOutput("Failed on either the first layer client or the second layer client.");
+            return;
+        }
+        
         console.log(await response.json());
-        setTimeout(() => {
-            console.log(response);
-        },1000);
 
-        // .then((results) => {
-        //     if (results.status === 401) {
-        //         setOutput("There was an Authentication failure. The error code is 401.");
-        //         return;
-        //     }
-    
-            
-        //     console.log(results.headers);
-        //     console.log(results.arrayBuffer());
-        //     console.log(results.text());
-        //     console.log(results.json());
-        //     console.log(results.bytes());
-        // }).then((readOutput) => {
-        //     if (!readOutput.done) {
-        //         setOutput("There was a response processing error.");
-        //         return;
-        //     }
-            
-        //     setOutput("Done!");
-        //     console.info(readOutput.value);
-        // }).catch((error) => {
-        //     if (error)
-        //     setOutput("The Yahoo!デベロッパーネットワーク denied your request or responded with a malformed response.");
-        //     console.error(error);
-        // })
+        setOutput("Done!");
     }
 
     return (
         <body>
             <main>
-                <h1>rubifuri (ルビ振り) Interface</h1>
-                <p>Note: This open-source project simply aims to create an client side interface for the API.</p>
-
+                <h1>ルビ振り Interface</h1>
                 <span style={{ textDecoration: "unset", margin: "15px 15px 15px 15px" }}><a href="https://developer.yahoo.co.jp/sitemap/">Webサービス by Yahoo! JAPAN</a></span>
+                <p>Note: This open-source project simply aims to create an client side interface for the API.</p>
+                <p>Created by Peter Go. </p>
+
 
                 <input id="apiKey" type="password" placeholder="App ID"></input>
                 <input id="in" placeholder="Kanji Input"></input>
